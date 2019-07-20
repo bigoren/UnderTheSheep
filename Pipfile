@@ -6,8 +6,8 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-requests = "*"
-paho-mqtt = "*"
+aiomqtt = "*"
+aiohttp = "*"
 
 [requires]
 python_version = "3.7"
