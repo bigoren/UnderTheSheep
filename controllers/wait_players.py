@@ -9,7 +9,7 @@ class WaitPlayers(Controller):
     seconds_for_recall = 5
 
     song_for_recall = "call_again.wav"
-    song_call_for_players = "nocturne.wav"
+    song_call_for_players = "call_players.wav"
 
     def __init__(self, loop, audio_service, boxes_service, players_service, giveup_cb, has_players_cb):
         super(WaitPlayers, self).__init__()
@@ -19,16 +19,16 @@ class WaitPlayers(Controller):
         self._loop = loop
         self._has_players_cb = has_players_cb
         self._giveup_cb = giveup_cb
-        self.audio_service = audio_service
+        self._audio_service = audio_service
 
         if not boxes_service.get_alive():
             print("not waiting for players - no connected boxes")
             self._loop.call_soon(self._giveup_cb)
             return
 
-        self.audio_service.play_song_request(self.song_call_for_players)
+        self._audio_service.play_song_request(self.song_call_for_players)
         self.reg_handlers.append(self._loop.call_later(self.seconds_for_giveup, self._state_timed_out))
-        self.reg_handlers.append(self._loop.call_later(self.seconds_for_recall, self.audio_service.play_song_request, self.song_for_recall))
+        self.reg_handlers.append(self._loop.call_later(self.seconds_for_recall, self._audio_service.play_song_request, self.song_for_recall))
 
         self.registered_boxes = set()
 

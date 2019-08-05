@@ -8,4 +8,4 @@ class Controller:
         for handler in self.reg_handlers:
             handler.cancel()
 
-        print("in del")
+        #print("in del")

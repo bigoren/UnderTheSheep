@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 aiomqtt = "*"
 aiohttp = "*"
+idna-ssl = "*"
 
 [requires]
 python_version = "3.7"

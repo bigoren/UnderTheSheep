@@ -2,6 +2,7 @@ import asyncio
 
 from aiohttp import ClientSession
 
+from controllers.song import Song
 from controllers.wait_players import WaitPlayers
 from services.players import Players
 
@@ -25,6 +26,9 @@ class UnderTheSeaState:
         self._boxes.register_on_chip_event(self.boxes_chip_event)
         self._boxes.register_on_disconnected_event(self.boxes_disconnected_event)
 
+        self._Song_state = Song(self._loop, self.audio_service, self.start_state_wait_for_players)
+
+        self.curr_state = None
         self._loop.call_later(3, self.start_state_wait_for_players)
 
     def stage_full_event(self, is_full):
@@ -33,11 +37,6 @@ class UnderTheSeaState:
     def boxes_chip_event(self, msg_data, box_index):
         if self.curr_state:
             self.curr_state.boxes_chip_event(msg_data, box_index)
-
-    # put all this in players service?
-    #     self.box_color[box_num] = dec_json["color"]
-    #     self.curr_uid[box_num] = dec_json["UID"]
-    #     self.old_chip[box_num] = dec_json["old_chip"]
 
     def boxes_disconnected_event(self):
         if self.curr_state:
@@ -48,8 +47,8 @@ class UnderTheSeaState:
 
     def start_state_play_song(self):
         print("start_state_play_song")
-        self.change_state(self.play_song)
-        # asyncio.create_task(self.play_song_request("alterego.wav"))
+        self.curr_state = self._Song_state
+        self.curr_state.choose_song()
 
     def start_state_wait_for_players(self):
         print("start_state_wait_for_players")
