@@ -2,15 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="01a073fa-e548-4480-bdd8-17754ff1c896" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/UnderTheSheep.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/UnderTheSheep.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controllers/song.py" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/song.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/state_machine.py" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/state_machine.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/wait_players.py" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/wait_players.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/audio.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/audio.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,11 +13,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" selection-start-line="10" selection-end-line="10" />
+            <state relative-caret-position="369">
+              <caret line="44" column="20" lean-forward="true" selection-start-line="44" selection-start-column="20" selection-end-line="44" selection-end-column="20" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -35,8 +28,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/services/audio.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="31" column="63" selection-start-line="31" selection-start-column="57" selection-end-line="31" selection-end-column="63" />
+            <state relative-caret-position="323">
+              <caret line="43" column="23" selection-start-line="43" selection-start-column="23" selection-end-line="43" selection-end-column="23" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -45,17 +38,21 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/controllers/song.py">
+        <entry file="file://$PROJECT_DIR$/services/stage.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="3" selection-start-line="3" selection-end-line="3" />
+            <state relative-caret-position="335">
+              <caret line="56" column="30" selection-start-line="56" selection-start-column="8" selection-end-line="56" selection-end-column="30" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/controllers/game.py">
-          <provider selected="true" editor-type-id="text-editor" />
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/controllers/song.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="25" column="36" selection-start-line="25" selection-start-column="36" selection-end-line="25" selection-end-column="36" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -75,8 +72,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/wait_players.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-234">
-              <caret line="11" column="41" selection-start-line="11" selection-start-column="41" selection-end-line="11" selection-end-column="41" />
+            <state relative-caret-position="973">
+              <caret line="58" column="54" lean-forward="true" selection-start-line="58" selection-start-column="12" selection-end-line="58" selection-end-column="54" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -87,8 +84,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controllers/state_machine.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="30" column="30" selection-start-line="30" selection-start-column="30" selection-end-line="30" selection-end-column="30" />
+            <state relative-caret-position="191">
+              <caret line="22" column="65" lean-forward="true" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="65" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -133,8 +130,10 @@
       <find>call_chip_event</find>
       <find>in del</find>
       <find>_audio_service</find>
-      <find>audio_service</find>
+      <find>mqtt_sub</find>
       <find>format</find>
+      <find>audio_service</find>
+      <find>register_on_full_event</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -157,14 +156,14 @@
         <option value="$PROJECT_DIR$/controllers/game.py" />
         <option value="$PROJECT_DIR$/pub-json-data.py" />
         <option value="$PROJECT_DIR$/services/stage.py" />
-        <option value="$PROJECT_DIR$/services/audio.py" />
         <option value="$PROJECT_DIR$/services/boxes.py" />
         <option value="$PROJECT_DIR$/services/players.py" />
         <option value="$PROJECT_DIR$/controllers/controller.py" />
         <option value="$PROJECT_DIR$/controllers/wait_players.py" />
-        <option value="$PROJECT_DIR$/controllers/song.py" />
         <option value="$PROJECT_DIR$/controllers/state_machine.py" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/services/audio.py" />
+        <option value="$PROJECT_DIR$/controllers/song.py" />
       </list>
     </option>
   </component>
@@ -363,12 +362,12 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.119072706" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.119072706" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32922733" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2936078" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.2936078" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -422,7 +421,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/services/stage.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/asyncio/tasks.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/asyncio/events.py" />
     <entry file="file://$PROJECT_DIR$/controllers/game.py">
@@ -436,9 +434,6 @@
         <state relative-caret-position="-1062" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/wait_stage.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/controllers/controller.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
@@ -446,37 +441,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/song.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/controllers/wait_players.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-234">
-          <caret line="11" column="41" selection-start-line="11" selection-start-column="41" selection-end-line="11" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/services/audio.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="31" column="63" selection-start-line="31" selection-start-column="57" selection-end-line="31" selection-end-column="63" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/state_machine.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="30" column="30" selection-start-line="30" selection-start-column="30" selection-end-line="30" selection-end-column="30" />
+        <state relative-caret-position="973">
+          <caret line="58" column="54" lean-forward="true" selection-start-line="58" selection-start-column="12" selection-end-line="58" selection-end-column="54" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
@@ -485,11 +453,48 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        <state relative-caret-position="369">
+          <caret line="44" column="20" lean-forward="true" selection-start-line="44" selection-start-column="20" selection-end-line="44" selection-end-column="20" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/audio.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="43" column="23" selection-start-line="43" selection-start-column="23" selection-end-line="43" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/wait_stage.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/stage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="335">
+          <caret line="56" column="30" selection-start-line="56" selection-start-column="8" selection-end-line="56" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/state_machine.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="191">
+          <caret line="22" column="65" lean-forward="true" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="65" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/song.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="25" column="36" selection-start-line="25" selection-start-column="36" selection-end-line="25" selection-end-column="36" />
         </state>
       </provider>
     </entry>

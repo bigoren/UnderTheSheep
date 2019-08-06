@@ -11,6 +11,7 @@ class AudioService:
     def __init__(self, loop, mqtt_client):
         self.mqtt_client = mqtt_client
         self._loop = loop
+        self._on_song_end_event = None
 
     def mqtt_sub(self):
         self.mqtt_client.subscribe("current-song", 1)
@@ -23,7 +24,7 @@ class AudioService:
         print("Player Message Received: " + message.payload.decode())
         payload = json.loads(message.payload)
         if not payload["song_is_playing"]:
-            pass
+            self.call_song_end_event()
 
     async def _play_song_request_async(self, file_name):
         try:
@@ -41,3 +42,11 @@ class AudioService:
             resp.raise_for_status()
             #logger.info("Got response [%s] for POST to player url: %s", resp.status, url)
             return resp
+
+    def register_on_song_end_event(self, func):
+        self._on_song_end_event = func
+        self.call_song_end_event()
+
+    def call_song_end_event(self):
+        if self._on_song_end_event is not None:
+            self._loop.call_soon(self._on_song_end_event)
