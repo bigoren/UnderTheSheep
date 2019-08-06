@@ -13,7 +13,15 @@ class Stage:
         self.is_full = None
 
         self._on_full_event = None
+        self._on_disconnected_event = None
         self._loop = loop
+        self._show_reading = False
+
+    def set_stage_show_reading(self, show_reading):
+        self._show_reading = show_reading
+
+    def get_is_full(self):
+        return self.is_full
 
     def mqtt_sub(self):
         self.mqtt_client.subscribe("/sensors/loadcell/#", 0)
@@ -49,9 +57,14 @@ class Stage:
             self.is_full = curr_full
             self.call_full_event()
 
-    def send_command_to_leds(self):
-        pub_topic = ""
-        data_out = ""
+        if self._show_reading:
+            fill_percent = float(curr_weight) / float(self.full_threshold)
+            #TODO: send the reading to the LEDs
+            self.send_command_to_leds(fill_percent)
+
+    def send_command_to_leds(self, fill_percent):
+        pub_topic = "/sensors/loadcell/leds"
+        data_out = {"led_percent": fill_percent, "led_color": int(fill_percent*128)}
         self.mqtt_client.publish(pub_topic, data_out)
 
     def register_on_full_event(self, func):
@@ -61,4 +74,11 @@ class Stage:
     def call_full_event(self):
         if self._on_full_event is not None:
             self._loop.call_soon(self._on_full_event, self.is_full)
+
+    def register_on_disconnected_event(self, func):
+        self._on_disconnected_event = func
+
+    def call_disconnected_event(self):
+        if self._on_disconnected_event:
+            self._loop.call_soon(self._on_disconnected_event)
 

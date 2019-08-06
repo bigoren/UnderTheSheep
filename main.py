@@ -28,6 +28,7 @@ async def subscribe():
     def on_connect(client, userdata, flags, rc):
         #print("Connected With Result Code "(rc))
         connected.set()
+        # state_machine.start_state_wait_for_players()
 
     mqtt_c.on_connect = on_connect
 

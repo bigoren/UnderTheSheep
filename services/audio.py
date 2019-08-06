@@ -45,7 +45,7 @@ class AudioService:
 
     def register_on_song_end_event(self, func):
         self._on_song_end_event = func
-        self.call_song_end_event()
+        #self.call_song_end_event()
 
     def call_song_end_event(self):
         if self._on_song_end_event is not None:
