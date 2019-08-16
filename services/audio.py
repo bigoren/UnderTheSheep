@@ -7,7 +7,7 @@ from aiohttp import ClientSession
 class AudioService:
 
     # player_host = "10.0.0.200"
-    player_host = "raspberrypi"
+    player_host = "10.0.0.200"
 
     def __init__(self, loop, mqtt_client):
         self.mqtt_client = mqtt_client
@@ -17,6 +17,9 @@ class AudioService:
     def mqtt_sub(self):
         self.mqtt_client.subscribe("current-song", 1)
         self.mqtt_client.message_callback_add("current-song", self._on_message_player)
+
+    def stop_song(self):
+        self._loop.create_task(self._play_song_request_async(None))
 
     def play_song_request(self, file_name):
         self._loop.create_task(self._play_song_request_async(file_name))
@@ -30,7 +33,10 @@ class AudioService:
     async def _play_song_request_async(self, file_name):
         try:
             async with ClientSession() as session:
-                player_msg = {'file_id': file_name, 'start_offset_ms': 0}
+                if file_name is not None:
+                    player_msg = {'file_id': file_name, 'start_offset_ms': 0}
+                else:
+                    player_msg = {}
                 url = "http://{0}:8080/api/current-song".format(self.player_host)
                 r = await self._player_request(url, session, player_msg)
                 return r

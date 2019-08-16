@@ -5,11 +5,11 @@ from controllers.controller import Controller
 
 class WaitPlayers(Controller):
 
-    seconds_for_giveup = 15
-    seconds_for_recall = 5
+    seconds_for_giveup = 60
+    seconds_for_recall = 30
 
-    song_for_recall = "call_again.wav"
-    song_call_for_players = "call_players.wav"
+    song_for_recall = "game_audio/call_again.wav"
+    song_call_for_players = "game_audio/call_players.wav"
 
     def __init__(self, loop, audio_service, boxes_service, players_service, stage_service, giveup_cb, has_players_cb):
         super(WaitPlayers, self).__init__()
@@ -29,6 +29,8 @@ class WaitPlayers(Controller):
 
         if not stage_service.get_is_alive():
             print("not waiting for players - no connected stage")
+            self._loop.call_soon(self._giveup_cb)
+            return
 
         self._audio_service.play_song_request(self.song_call_for_players)
         self.reg_handlers.append(self._loop.call_later(self.seconds_for_giveup, self._state_timed_out))
@@ -37,6 +39,7 @@ class WaitPlayers(Controller):
         self.registered_boxes = set()
 
     def _state_timed_out(self):
+        print("state wait for players timed out")
         if len(self.registered_boxes) > 0:
             self._loop.call_soon(self._has_players_cb)
         else:
@@ -61,5 +64,8 @@ class WaitPlayers(Controller):
         alive_boxes_indices = set(self._boxes_service.get_alive())
         if len(self.registered_boxes) >= len(alive_boxes_indices):
             self._loop.call_soon(self._has_players_cb)
+
+    def stage_full_event(self, is_full):
+        pass
 
 

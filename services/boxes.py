@@ -75,7 +75,9 @@ class Boxes:
                 data = {"state":color, "master_state":2}
         else:
             data = {"state":128, "master_state":0}
-        self.mqtt_client.publish(topic, json.dumps(data))
+        json_str = json.dumps(data)
+        print("sending command to leds on topic {0}, msg: {1}".format(topic, json_str))
+        self.mqtt_client.publish(topic, json_str)
 
     def register_on_chip_event(self, func):
         self._on_chip_event = func

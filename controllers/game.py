@@ -51,3 +51,6 @@ class Game(Controller):
     def _song_end_event(self):
         # what needs to happen at song end?
         self._loop.call_soon(self._song_end_cb)
+
+    def stage_full_event(self, is_full):
+        pass

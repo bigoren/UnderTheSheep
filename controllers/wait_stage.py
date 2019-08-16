@@ -3,11 +3,11 @@ from controllers.controller import Controller
 
 class WaitStage(Controller):
 
-    seconds_for_giveup = 15
-    seconds_for_recall = 5
+    seconds_for_giveup = 40
+    seconds_for_recall = 20
 
-    song_for_recall = "call_again.wav"
-    song_call_for_stage = "call_stage.wav"
+    song_for_recall = "game_audio/call_again.wav"
+    song_call_for_stage = "game_audio/call_stage.wav"
 
     def __init__(self, loop, audio_service, stage_service, giveup_cb, stage_full_cb):
         super(WaitStage, self).__init__()

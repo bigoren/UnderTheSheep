@@ -45,6 +45,7 @@ class Stage:
         if self.is_full is not None:
             self.is_full = None
             self.call_full_event()
+        self.call_disconnected_event()
 
     def _handle_reading(self, curr_weight):
         if self.is_full:
@@ -73,6 +74,7 @@ class Stage:
 
     def call_full_event(self):
         if self._on_full_event is not None:
+            print("full event called, is full: {0}".format(self.is_full))
             self._loop.call_soon(self._on_full_event, self.is_full)
 
     def register_on_disconnected_event(self, func):
