@@ -8,6 +8,7 @@ class Game(Controller):
     yam_audio_list = ("/game_audio/yam.wav", "/game_audio/yam1.wav", "/game_audio/yam2.wav", "/game_audio/yam3.wav", "/game_audio/yam4.wav", "/game_audio/yam5.wav")
     land_audio_list = ("/game_audio/land.wav", "/game_audio/land1.wav", "/game_audio/land2.wav", "/game_audio/land3.wav", "/game_audio/land4.wav", "/game_audio/land5.wav")
     win_audio_list = ("/game_audio/win.wav", "/game_audio/win1.wav", "/game_audio/win2.wav", "/game_audio/win3.wav")
+    yam_and_land_list = yam_audio_list + land_audio_list
     # call_players_audio = "/game_audio/call_players.wav"
     # call_stage_audio = "/game_audio/call_stage.wav"
     # call_again_audio = ("/game_audio/call_again.wav", "/game_audio/call_again2.wav")
@@ -22,27 +23,30 @@ class Game(Controller):
         self._stage_service = stage_service
         self._song_end_cb = song_end_cb
         self._audio_service.register_on_song_end_event(self._song_end_event)
-        self.prev_yam_played = 0
-        self.prev_land_played = 0
-        self.prev_win_played = 0
+        self._prev_played_index = 0
+        self._rounds = 0
 
+    def is_yam(self, index):
+        return index < len(self.yam_audio_list)
+
+    def is_land(self, index):
+        return not self.is_yam(index)
 
     def choose_land_or_yam(self):
-        # need to randomly? select yam or land with a flag for yam or land
-        yam_and_land_list = self.yam_audio_list + self.land_audio_list
-        random_selection = random.randint(0, 12) # make it size_of list?
-        selected_yam_or_land = yam_and_land_list[random_selection]
-        while selected_yam_or_land == self.prev_yam_played or selected_yam_or_land == self.prev_land_played:
-            random_selection = random.randint(0, 12)  # make it size_of list?
-            selected_yam_or_land = yam_and_land_list[random_selection]
+        random_selection = random.randint(1, len(self.yam_and_land_list))
+        next_play_index = (self._prev_played_index + random_selection) % len(self.yam_and_land_list)
+        self._prev_played_index = next_play_index
+        audio_file_name = self.yam_and_land_list[next_play_index]
 
-        if random_selection > 5:    # not good code
-            self.prev_land_played = selected_yam_or_land
-        else:
-            self.prev_yam_played = selected_yam_or_land
+        self._rounds += 1
 
-        print("playing selected {0}".format(selected_yam_or_land))
-        self._audio_service.play_song_request(selected_yam_or_land)
+        print("playing file {0}, round: {1}".format(audio_file_name, self._rounds))
+        self._audio_service.play_song_request(audio_file_name)
+
+        self._loop.call_later(10, self._yam_land_timedout)
+
+    def _yam_land_timedout(self):
+        self.choose_land_or_yam()
 
     def _song_end_event(self):
         # what needs to happen at song end?

@@ -8,7 +8,7 @@ from services.stage import Stage
 from controllers.state_machine import UnderTheSeaState
 
 loop = asyncio.get_event_loop()
-broker_url = "10.0.0.200"
+broker_url = "raspberrypi"
 broker_port = 1883
 
 mqtt_c = aiomqtt.Client(loop=loop, client_id="main")
