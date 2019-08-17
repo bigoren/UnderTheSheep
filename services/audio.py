@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 
 from aiohttp import ClientSession
 
@@ -25,7 +26,7 @@ class AudioService:
         self._loop.create_task(self._play_song_request_async(file_name))
 
     def _on_message_player(self, client, userdata, message):
-        print("Player Message Received: " + message.payload.decode())
+        logging.debug("Player Message Received: " + message.payload.decode())
         payload = json.loads(message.payload)
         if not payload["song_is_playing"]:
             self.call_song_end_event()
@@ -41,7 +42,7 @@ class AudioService:
                 r = await self._player_request(url, session, player_msg)
                 return r
         except:
-            print("error playing song {}".format(file_name))
+            logging.error("error playing song {}".format(file_name))
 
     async def _player_request(self, url: str, session: ClientSession, player_msg):
         """POST request wrapper to send a json over http."""

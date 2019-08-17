@@ -1,4 +1,4 @@
-
+import logging
 from controllers.controller import Controller
 
 
@@ -22,7 +22,7 @@ class Song(Controller):
 
     def _do_play_song(self):
         selected_song = self.song_list[self.curr_song_index]
-        print("playing song index {0} named {1}".format(self.curr_song_index, selected_song))
+        logging.info("playing song index {0} named {1}".format(self.curr_song_index, selected_song))
         self._audio_service.play_song_request(selected_song)
         self._is_playing = True
 

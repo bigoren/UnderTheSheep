@@ -1,3 +1,4 @@
+import logging
 import asyncio
 
 from controllers.controller import Controller
@@ -23,12 +24,12 @@ class WaitPlayers(Controller):
         self._giveup_cb = giveup_cb
 
         if not boxes_service.get_alive():
-            print("not waiting for players - no connected boxes")
+            logging.info("not waiting for players - no connected boxes")
             self._loop.call_soon(self._giveup_cb)
             return
 
         if not stage_service.get_is_alive():
-            print("not waiting for players - no connected stage")
+            logging.info("not waiting for players - no connected stage")
             self._loop.call_soon(self._giveup_cb)
             return
 
@@ -39,7 +40,7 @@ class WaitPlayers(Controller):
         self.registered_boxes = set()
 
     def _state_timed_out(self):
-        print("state wait for players timed out")
+        logging.info("state wait for players timed out")
         if len(self.registered_boxes) > 0:
             self._loop.call_soon(self._has_players_cb)
         else:
@@ -48,7 +49,7 @@ class WaitPlayers(Controller):
     def boxes_chip_event(self, msg_data, box_index):
 
         if box_index in self.registered_boxes:
-            print("ignoring chip on an already registered box")
+            logging.info("ignoring chip on an already registered box")
             return
 
         color = msg_data["color"]
