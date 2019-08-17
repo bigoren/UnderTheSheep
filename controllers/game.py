@@ -13,7 +13,7 @@ class Game(Controller):
     # call_stage_audio = "/game_audio/call_stage.wav"
     # call_again_audio = ("/game_audio/call_again.wav", "/game_audio/call_again2.wav")
 
-    def __init__(self, loop, audio_service, boxes_service, players_service, stage_service, song_end_cb):
+    def __init__(self, loop, audio_service, boxes_service, players_service, stage_service, game_end_cb):
         super(Game, self).__init__()
 
         self._loop = loop
@@ -21,8 +21,8 @@ class Game(Controller):
         self._boxes_service = boxes_service
         self._players_service = players_service
         self._stage_service = stage_service
-        self._song_end_cb = song_end_cb
-        self._audio_service.register_on_song_end_event(self._song_end_event)
+        self._game_end_cb = game_end_cb
+        # self._audio_service.register_on_song_end_event(self._song_end_event)
         self._prev_played_index = 0
         self._rounds = 0
 
@@ -33,6 +33,10 @@ class Game(Controller):
         return not self.is_yam(index)
 
     def choose_land_or_yam(self):
+        if self._rounds == self.max_rounds:
+            self.game_end()
+            return
+
         random_selection = random.randint(1, len(self.yam_and_land_list))
         next_play_index = (self._prev_played_index + random_selection) % len(self.yam_and_land_list)
         self._prev_played_index = next_play_index
@@ -48,9 +52,14 @@ class Game(Controller):
     def _yam_land_timedout(self):
         self.choose_land_or_yam()
 
-    def _song_end_event(self):
+    # def _song_end_event(self):
         # what needs to happen at song end?
-        self._loop.call_soon(self._song_end_cb)
+        # self._loop.call_soon(self._song_end_cb)
 
     def stage_full_event(self, is_full):
         pass
+
+    def game_end(self):
+        print("game over, calling game over callback")
+        self._loop.call_soon(self._game_end_cb)
+        return

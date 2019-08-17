@@ -81,11 +81,11 @@ class UnderTheSeaState:
         print("start_state_wait_for_stage")
         self.cancel_prev_state()
         self.curr_state = WaitStage(self._loop, self._audio_service, self._stage,
-                                    self.start_state_play_song, self.start_state_wait_for_stage)
+                                    self.start_state_play_song, self.start_state_game_on)
 
     def start_state_game_on(self):
         print("start state 'game on`")
         self.cancel_prev_state()
         self.curr_state = Game(self._loop, self._audio_service, self._boxes, self.players_service, self._stage,
-                                    self.start_state_play_song)
+                               self.start_state_play_song)
 
