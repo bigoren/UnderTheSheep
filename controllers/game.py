@@ -1,3 +1,4 @@
+import logging
 import random
 
 from controllers.controller import Controller
@@ -40,7 +41,7 @@ class Game(Controller):
 
         self._rounds += 1
 
-        print("playing file {0}, round: {1}".format(audio_file_name, self._rounds))
+        logging.info("playing file {0}, round: {1}".format(audio_file_name, self._rounds))
         self._audio_service.play_song_request(audio_file_name)
 
         self._loop.call_later(10, self._yam_land_timedout)
