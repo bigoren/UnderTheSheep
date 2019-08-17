@@ -3,7 +3,7 @@ import logging
 
 class Stage:
 
-    full_threshold = 75
+    full_threshold = 250
     empty_threshold = 50
 
     def __init__(self, loop, mqtt_client):
@@ -37,7 +37,7 @@ class Stage:
             self._handle_reading(int(curr_weight['weight']))
 
     def _on_message_load_cell(self, client, userdata, message):
-        logging.debug("Load Cell Message Received: " + message.payload.decode())
+        #logging.debug("Load Cell Message Received: " + message.payload.decode())
         self._new_message(json.loads(message.payload.decode()))
 
     def _handle_dead(self):

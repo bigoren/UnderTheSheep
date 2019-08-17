@@ -35,14 +35,14 @@ class Boxes:
         return [k for k, v in self.boxes.items() if v]
 
     def _on_mqtt_message_monitor(self, client, userdata, message):
-        logging.debug("Got message:", message.topic, message.payload.decode())
+        logging.debug("Got message: {}/{}".format(message.topic, message.payload.decode()))
         box_name = message.topic.split("/")[3]
         box_index = int(box_name[3])
         msg_data = json.loads(message.payload.decode())
         self._new_monitor_message(msg_data, box_index)
 
     def _on_mqtt_message_chip(self, client, userdata, message):
-        logging.debug("Got message:", message.topic, message.payload.decode())
+        #logging.debug("Got message:", message.topic, message.payload.decode())
         box_name = message.topic.split("/")[3]
         box_index = int(box_name[3])
         msg_data = json.loads(message.payload.decode())
@@ -77,7 +77,7 @@ class Boxes:
         else:
             data = {"color":128, "master_state":0}
         json_str = json.dumps(data)
-        logging.debug("sending command to leds on topic {0}, msg: {1}".format(topic, json_str))
+        #logging.debug("sending command to leds on topic {0}, msg: {1}".format(topic, json_str))
         self.mqtt_client.publish(topic, json_str)
 
     def shutdown_all_leds(self):
