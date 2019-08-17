@@ -1,11 +1,16 @@
 import asyncio
-import json
 import aiomqtt
+import logging
 
 from services.audio import AudioService
 from services.boxes import Boxes
 from services.stage import Stage
 from controllers.state_machine import UnderTheSeaState
+
+# Configure Logging
+logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s.%(msecs)03d] -%(levelname).1s- : %(message)s',
+                    datefmt='%d-%m-%Y %H:%M:%S')
+logging.info('Main program started for UnderTheSheep.')
 
 loop = asyncio.get_event_loop()
 broker_url = "192.168.14.22"
@@ -26,20 +31,21 @@ async def subscribe():
     connected = asyncio.Event(loop=loop)
 
     def on_connect(client, userdata, flags, rc):
-        #print("Connected With Result Code "(rc))
+        logging.info('subscribe(): on_connect(): connected with result code: {}'.format(rc))
         connected.set()
         # state_machine.start_state_wait_for_players()
 
     mqtt_c.on_connect = on_connect
 
+    logging.info(f'Connecting to: {broker_url}:{broker_port}')
     await mqtt_c.connect(broker_url, broker_port)
     await connected.wait()
-    print("Connected!")
+    logging.info("Connected!")
 
     mqtt_c.subscribe("monitor", 0)
 
     def on_message_monitor(client, userdata, message):
-        print("Monitor Message Received: " + message.payload.decode())
+        logging.debug("Monitor Message Received: " + message.payload.decode())
 
     audio_service.mqtt_sub()
     stage.mqtt_sub()

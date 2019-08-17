@@ -1,5 +1,5 @@
 import json
-
+import logging
 
 class Stage:
 
@@ -37,11 +37,11 @@ class Stage:
             self._handle_reading(int(curr_weight['weight']))
 
     def _on_message_load_cell(self, client, userdata, message):
-        # print("Load Cell Message Received: " + message.payload.decode())
+        logging.debug("Load Cell Message Received: " + message.payload.decode())
         self._new_message(json.loads(message.payload.decode()))
 
     def _handle_dead(self):
-        print("stage is disconnected")
+        logging.error("stage is disconnected")
         if self.is_full is not None:
             self.is_full = None
             self.call_full_event()
@@ -54,7 +54,7 @@ class Stage:
             curr_full = curr_weight > self.full_threshold
 
         if curr_full != self.is_full:
-            print("full state changed. was: {0}, now: {1}".format(self.is_full, curr_full))
+            logging.info("full state changed. was: {0}, now: {1}".format(self.is_full, curr_full))
             self.is_full = curr_full
             self.call_full_event()
 
@@ -70,7 +70,6 @@ class Stage:
         if fill_percent > 1:
             fill_percent = 1.0
         data_out = {"led_percent": fill_percent, "led_color": int(fill_percent*128)}
-        #print("Sending {0} to stage".format(data_out))
         self.mqtt_client.publish(pub_topic, json.dumps(data_out))
 
     def register_on_full_event(self, func):
@@ -79,7 +78,7 @@ class Stage:
 
     def call_full_event(self):
         if self._on_full_event is not None:
-            print("full event called, is full: {0}".format(self.is_full))
+            logging.info("full event called, is full: {0}".format(self.is_full))
             self._loop.call_soon(self._on_full_event, self.is_full)
 
     def register_on_disconnected_event(self, func):

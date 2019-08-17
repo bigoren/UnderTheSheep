@@ -1,3 +1,4 @@
+import logging
 from controllers.controller import Controller
 
 
@@ -19,12 +20,12 @@ class WaitStage(Controller):
         self._giveup_cb = giveup_cb
 
         if not stage_service.get_is_alive():
-            print("not waiting for stage - no connected stage")
+            logging.info("not waiting for stage - no connected stage")
             self._loop.call_soon(self._giveup_cb)
             return
 
         if stage_service.get_is_full():
-            print("not waiting for stage - stage is already full")
+            logging.info("not waiting for stage - stage is already full")
             self._loop.call_soon(self._stage_full_cb)
             return
 

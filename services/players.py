@@ -1,3 +1,6 @@
+import logging
+
+
 class Player:
 
     def __init__(self, uid, color, old_chip, box_index):
@@ -20,7 +23,7 @@ class Player:
 
     @property
     def chip_uid(self):
-        return self._chip_uidW
+        return self._chip_uid
 
     @property
     def box_index(self):
@@ -39,13 +42,13 @@ class Players:
     def register_player(self, uid, color, old_chip, box_index):
 
         if uid in self._registered_players:
-            print("ignoring double booking")
+            logging.warning("ignoring double booking")
             return False
 
         player = Player(uid, color, old_chip, box_index)
 
         self._registered_players[uid] = player
-        print("registering player {0} to game with color {1} and old chip {2} on box number {3}".format(uid, color, old_chip, box_index))
+        logging.info("registering player {0} to game with color {1} and old chip {2}".format(uid, color, old_chip))
         return True
 
     def get_registered_player(self, uid):

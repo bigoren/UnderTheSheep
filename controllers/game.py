@@ -1,3 +1,4 @@
+import logging
 import random
 
 from controllers.controller import Controller
@@ -43,7 +44,7 @@ class Game(Controller):
         self._prev_played_index = next_play_index
         audio_file_name = self.yam_and_land_list[next_play_index]
 
-        print("playing file {0}, round: {1}".format(audio_file_name, self._rounds))
+        logging.info("playing file {0}, round: {1}".format(audio_file_name, self._rounds))
         self._audio_service.play_song_request(audio_file_name)
 
         if self.is_yam(self._prev_played_index):
@@ -78,9 +79,6 @@ class Game(Controller):
         if self._players_service.has_all_players_chipped():
             self.choose_land_or_yam()
             self._players_service.reset_players_chipped_state()
-
-    def _check_boxes_played(self):
-        return all(self._played_boxes.values())
 
     def game_end(self):
         print("game over, calling game over callback")

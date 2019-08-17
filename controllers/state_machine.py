@@ -1,3 +1,4 @@
+import logging
 import asyncio
 
 from aiohttp import ClientSession
@@ -41,7 +42,7 @@ class UnderTheSeaState:
             self.curr_state.stage_full_event(is_full)
 
     def stage_disconnected_event(self):
-        print("stage_disconnected_event")
+        logging.info("stage_disconnected_event")
         if type(self.curr_state) != Song:
             self.start_state_play_song()
 
@@ -65,29 +66,29 @@ class UnderTheSeaState:
         self.curr_state.cancel_timers()
 
     def start_state_play_song(self):
-        print("start_state_play_song")
+        logging.info("start_state_play_song")
         self.cancel_prev_state()
         self._boxes.shutdown_all_leds()
         self.curr_state = self._Song_state
         self.curr_state.choose_song()
 
     def start_state_wait_for_players(self):
-        print("start_state_wait_for_players")
         self._boxes.shutdown_all_leds()
+        logging.info("start_state_wait_for_players")
         self.players_service = Players()
         self.cancel_prev_state()
         self.curr_state = WaitPlayers(self._loop, self._audio_service, self._boxes, self.players_service, self._stage,
                                       self.start_state_play_song, self.start_state_wait_for_stage)
 
     def start_state_wait_for_stage(self):
-        print("start_state_wait_for_stage")
+        logging.info("start_state_wait_for_stage")
         self.cancel_prev_state()
         self.curr_state = WaitStage(self._loop, self._audio_service, self._stage,
                                     self.start_state_play_song, self.start_state_game_on)
         self._stage.set_stage_show_reading(True)
 
     def start_state_game_on(self):
-        print("start state 'game on`")
+        logging.info("start state 'game on`")
         self._boxes.shutdown_all_leds()
         self.cancel_prev_state()
         self.curr_state = Game(self._loop, self._audio_service, self._boxes, self.players_service, self._stage,
