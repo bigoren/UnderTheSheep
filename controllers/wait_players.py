@@ -52,7 +52,7 @@ class WaitPlayers(Controller):
             return
 
         color = msg_data["color"]
-        registered = self._players_service.register_player(msg_data["UID"], color, msg_data["old_chip"])
+        registered = self._players_service.register_player(msg_data["UID"], color, msg_data["old_chip"], box_index)
         if not registered:
             return
 

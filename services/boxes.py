@@ -65,19 +65,23 @@ class Boxes:
     def send_command_to_leds(self, box_index, color):
         topic = "/sensors/rfid/box{0}/leds".format(box_index)
         # color map = 0 is off, 1 is red, 2 is yellow, 3 is green, 4 is blue, 5 is purple, 6 is rainbow, 7 is twinkly
-        # state > 127 is rainbow, master state 0 is off, 1 is twinkly, 2 is colors
+        # color > 127 is rainbow, master state 0 is off, 1 is twinkly, 2 is colors
         if color:
             if color == 6:
-                data = {"state":128, "master_state":2}
+                data = {"color":128, "master_state":2}
             if color == 7:
-                data = {"state":128, "master_state":1}
+                data = {"color":128, "master_state":1}
             else:
-                data = {"state":color, "master_state":2}
+                data = {"color":color, "master_state":2}
         else:
-            data = {"state":128, "master_state":0}
+            data = {"color":128, "master_state":0}
         json_str = json.dumps(data)
         print("sending command to leds on topic {0}, msg: {1}".format(topic, json_str))
         self.mqtt_client.publish(topic, json_str)
+
+    def shutdown_all_leds(self):
+        for box_index in self.boxes.keys():
+            self.send_command_to_leds(box_index, None)
 
     def register_on_chip_event(self, func):
         self._on_chip_event = func

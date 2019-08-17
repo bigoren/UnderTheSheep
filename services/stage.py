@@ -3,8 +3,8 @@ import json
 
 class Stage:
 
-    full_threshold = 10
-    empty_threshold = 4
+    full_threshold = 75
+    empty_threshold = 50
 
     def __init__(self, loop, mqtt_client):
 
@@ -25,7 +25,7 @@ class Stage:
 
     def mqtt_sub(self):
         self.mqtt_client.subscribe("/sensors/loadcell/#", 0)
-        self.mqtt_client.message_callback_add("/sensors/loadcell/#", self._on_message_load_cell)
+        self.mqtt_client.message_callback_add("/sensors/loadcell/load", self._on_message_load_cell)
 
     def get_is_alive(self):
         return self.is_full is not None
@@ -37,7 +37,7 @@ class Stage:
             self._handle_reading(int(curr_weight['weight']))
 
     def _on_message_load_cell(self, client, userdata, message):
-        print("Load Cell Message Received: " + message.payload.decode())
+        # print("Load Cell Message Received: " + message.payload.decode())
         self._new_message(json.loads(message.payload.decode()))
 
     def _handle_dead(self):
@@ -65,8 +65,13 @@ class Stage:
 
     def send_command_to_leds(self, fill_percent):
         pub_topic = "/sensors/loadcell/leds"
+        if fill_percent < 0:
+            fill_percent = 0.0
+        if fill_percent > 1:
+            fill_percent = 1.0
         data_out = {"led_percent": fill_percent, "led_color": int(fill_percent*128)}
-        self.mqtt_client.publish(pub_topic, data_out)
+        #print("Sending {0} to stage".format(data_out))
+        self.mqtt_client.publish(pub_topic, json.dumps(data_out))
 
     def register_on_full_event(self, func):
         self._on_full_event = func

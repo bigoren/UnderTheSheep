@@ -7,7 +7,7 @@ from aiohttp import ClientSession
 class AudioService:
 
     # player_host = "10.0.0.200"
-    player_host = "10.0.0.200"
+    player_host = "192.168.14.22"
 
     def __init__(self, loop, mqtt_client):
         self.mqtt_client = mqtt_client
