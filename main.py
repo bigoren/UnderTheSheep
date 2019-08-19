@@ -1,6 +1,9 @@
+#!/usr/bin/env python3.7
 import asyncio
 import aiomqtt
 import logging
+import logging.handlers
+import os
 
 from services.audio import AudioService
 from services.boxes import Boxes
@@ -8,10 +11,24 @@ from services.stage import Stage
 from controllers.state_machine import UnderTheSeaState
 
 # Configure Logging
-logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s.%(msecs)03d] -%(levelname).1s- : %(message)s',
-                    datefmt='%d-%m-%Y %H:%M:%S')
-logging.info('Main program started for UnderTheSheep.')
+logfile = 'under_the_sheep.log'
+log_formatter = logging.Formatter('[%(asctime)s.%(msecs)03d] -%(levelname).1s- : %(message)s',
+                                  datefmt='%d-%m-%Y %H:%M:%S')
+# set logging to file to be a 100MB file with 1 rotated backup
+file_handler = logging.handlers.RotatingFileHandler(logfile, maxBytes=100e6, backupCount=1)
+file_handler.setFormatter(log_formatter)
 
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(log_formatter)
+
+root_logger = logging.getLogger()
+root_logger.addHandler(file_handler)
+root_logger.addHandler(console_handler)
+
+root_logger.setLevel(logging.DEBUG)
+
+logging.info('Main program started for UnderTheSheep.')
+logging.info('Log file: {}'.format(os.path.abspath(logfile)))
 loop = asyncio.get_event_loop()
 broker_url = "192.168.14.22"
 broker_port = 1883
