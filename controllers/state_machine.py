@@ -47,7 +47,7 @@ class UnderTheSeaState:
             self.start_state_play_song()
 
     def _song_end_event(self):
-        if type(self.curr_state) == Song:
+        if type(self.curr_state) == Song or type(self.curr_state) == Game:
             self.curr_state.song_end_event()
 
     def boxes_chip_event(self, msg_data, box_index):
@@ -68,9 +68,10 @@ class UnderTheSeaState:
     def start_state_play_song(self):
         logging.info("start_state_play_song")
         self.cancel_prev_state()
-        self._boxes.shutdown_all_leds()
         self.curr_state = self._Song_state
         self.curr_state.choose_song()
+        self._boxes.shutdown_all_leds()
+        self._stage.send_command_to_leds(0.0)
 
     def start_state_wait_for_players(self):
         self._boxes.shutdown_all_leds()
@@ -86,6 +87,12 @@ class UnderTheSeaState:
         self.curr_state = WaitStage(self._loop, self._audio_service, self._stage,
                                     self.start_state_play_song, self.start_state_game_on)
         self._stage.set_stage_show_reading(True)
+        chipped_boxes = []
+        for player in self.players_service.registered_players.values():
+            chipped_boxes.append(player.box_index)
+        for box in self._boxes.get_alive():
+            if box not in chipped_boxes:
+                self._boxes.send_command_to_leds(box, None)
 
     def start_state_game_on(self):
         logging.info("start state 'game on`")

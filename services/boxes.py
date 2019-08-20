@@ -84,6 +84,10 @@ class Boxes:
         for box_index in self.boxes.keys():
             self.send_command_to_leds(box_index, None)
 
+    def waiting_for_players_led(self):
+        for box_index in self.boxes.keys():
+            self.send_command_to_leds(box_index, 7)
+
     def register_on_chip_event(self, func):
         self._on_chip_event = func
 

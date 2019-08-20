@@ -6,8 +6,8 @@ from controllers.controller import Controller
 
 class WaitPlayers(Controller):
 
-    seconds_for_giveup = 60
-    seconds_for_recall = 30
+    seconds_for_giveup = 10
+    seconds_for_recall = 10
 
     song_for_recall = "game_audio/call_again.wav"
     song_call_for_players = "game_audio/call_players.wav"
@@ -32,6 +32,8 @@ class WaitPlayers(Controller):
             logging.info("not waiting for players - no connected stage")
             self._loop.call_soon(self._giveup_cb)
             return
+
+        self._boxes_service.waiting_for_players_led()
 
         self._audio_service.play_song_request(self.song_call_for_players)
         self.reg_handlers.append(self._loop.call_later(self.seconds_for_giveup, self._state_timed_out))

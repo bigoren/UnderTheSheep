@@ -25,6 +25,8 @@ class Game(Controller):
         self._prev_played_index = 0
         self._rounds = 0
         self._timeout_handle = None
+        self._song_end = False
+        self._was_full = False
         self.choose_land_or_yam()
 
     def is_yam(self, index):
@@ -40,16 +42,13 @@ class Game(Controller):
         self._rounds += 1
 
         random_selection = random.randint(1, len(self.yam_and_land_list))
-        next_play_index = (self._prev_played_index + random_selection) % len(self.yam_and_land_list)
+        next_play_index = (self._prev_played_index + random_selection) % (len(self.yam_and_land_list) - 2)
         self._prev_played_index = next_play_index
         audio_file_name = self.yam_and_land_list[next_play_index]
 
+        self._song_end = False
         logging.info("playing file {0}, round: {1}".format(audio_file_name, self._rounds))
         self._audio_service.play_song_request(audio_file_name)
-
-        if self.is_yam(self._prev_played_index):
-            for player in self._players_service.registered_players.values():
-                self._boxes_service.send_command_to_leds(player.box_index, player.color)
 
         if self._timeout_handle is not None:
             self._timeout_handle.cancel()
@@ -60,9 +59,21 @@ class Game(Controller):
             return
         elif is_full:
             self.choose_land_or_yam()
+            self._was_full = True
+        elif not is_full and self._was_full:
+            logging.info("Went off stage...")
+            self.game_end()
+            self._was_full = False
+        else:
+            self._was_full = False
 
     def boxes_chip_event(self, msg_data, box_index):
         if self.is_land(self._prev_played_index):
+            return
+        if self._stage_service.is_full:
+            logging.info("Lost because you chipped when the stage was full")
+            self.game_end()
+        if not self._song_end:
             return
 
         chip_uid = msg_data["UID"]
@@ -83,5 +94,16 @@ class Game(Controller):
     def game_end(self):
         print("game over, calling game over callback")
         self._players_service.clean_players()
+        self._timeout_handle.cancel()
         self._loop.call_soon(self._game_end_cb)
         return
+
+    def song_end_event(self):
+        self._song_end = True
+        if self.is_yam(self._prev_played_index):
+            for player in self._players_service.registered_players.values():
+                self._boxes_service.send_command_to_leds(player.box_index, player.color)
+
+        if self.is_land(self._prev_played_index):
+            if self._stage_service.is_full:
+                self.stage_full_event(self._stage_service.is_full)

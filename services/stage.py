@@ -3,8 +3,8 @@ import logging
 
 class Stage:
 
-    full_threshold = 250
-    empty_threshold = 50
+    full_threshold = 300
+    empty_threshold = 25
 
     def __init__(self, loop, mqtt_client):
 
@@ -59,7 +59,10 @@ class Stage:
             self.call_full_event()
 
         if self._show_reading:
-            fill_percent = float(curr_weight) / float(self.full_threshold)
+            if float(curr_weight) > self.empty_threshold:
+                fill_percent = float(curr_weight) / float(self.full_threshold)
+            else:
+                fill_percent = 0.0
             #TODO: send the reading to the LEDs
             self.send_command_to_leds(fill_percent)
 

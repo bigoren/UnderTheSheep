@@ -21,8 +21,6 @@ mqtt_c = aiomqtt.Client(loop=loop, client_id="main")
 stage = Stage(loop, mqtt_c)
 boxes = Boxes(loop, mqtt_c)
 audio_service = AudioService(loop, mqtt_c)
-state_machine = UnderTheSeaState(loop, stage, boxes, audio_service)
-
 
 
 async def subscribe():
@@ -55,6 +53,9 @@ async def subscribe():
 
 
 loop.run_until_complete(subscribe())
+
+# We want to run the state machine only after we connected to the mqtt service
+state_machine = UnderTheSeaState(loop, stage, boxes, audio_service)
 
 loop.run_forever()
 
