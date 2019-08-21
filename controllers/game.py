@@ -9,6 +9,7 @@ class Game(Controller):
     yam_audio_list = ("/game_audio/yam.wav", "/game_audio/yam1.wav", "/game_audio/yam2.wav", "/game_audio/yam3.wav", "/game_audio/yam4.wav", "/game_audio/yam5.wav")
     land_audio_list = ("/game_audio/land.wav", "/game_audio/land1.wav", "/game_audio/land2.wav", "/game_audio/land3.wav", "/game_audio/land4.wav", "/game_audio/land5.wav")
     win_audio_list = ("/game_audio/win.wav", "/game_audio/win1.wav", "/game_audio/win2.wav", "/game_audio/win3.wav")
+    lose_audio = "/game_audio/lose.wav"
     yam_and_land_list = yam_audio_list + land_audio_list
     max_rounds = 10
 
@@ -27,6 +28,9 @@ class Game(Controller):
         self._timeout_handle = None
         self._song_end = False
         self._was_full = False
+        self._game_win = False
+        self._game_lose = False
+        self._game_over = False
         self.choose_land_or_yam()
 
     def is_yam(self, index):
@@ -37,11 +41,12 @@ class Game(Controller):
 
     def choose_land_or_yam(self):
         if self._rounds == self.max_rounds:
-            self.game_end()
+            self._game_win = True
+            self._audio_service.play_song_request(self.win_audio_list[0])
             return
         self._rounds += 1
 
-        random_selection = random.randint(1, len(self.yam_and_land_list))
+        random_selection = random.randint(1, len(self.yam_and_land_list)) # random selection should start from 0?
         next_play_index = (self._prev_played_index + random_selection) % (len(self.yam_and_land_list) - 2)
         self._prev_played_index = next_play_index
         audio_file_name = self.yam_and_land_list[next_play_index]
@@ -62,7 +67,7 @@ class Game(Controller):
             self._was_full = True
         elif not is_full and self._was_full:
             logging.info("Went off stage...")
-            self.game_end()
+            self.game_lose()
             self._was_full = False
         else:
             self._was_full = False
@@ -72,7 +77,7 @@ class Game(Controller):
             return
         if self._stage_service.is_full:
             logging.info("Lost because you chipped when the stage was full")
-            self.game_end()
+            self.game_lose()
         if not self._song_end:
             return
 
@@ -91,6 +96,11 @@ class Game(Controller):
             self.choose_land_or_yam()
             self._players_service.reset_players_chipped_state()
 
+    def game_lose(self):
+        print("game lose, play lose audio and flag it")  # only when the audio ends the game will be over
+        self._audio_service.play_song_request(self.lose_audio)
+        self._game_lose = True
+
     def game_end(self):
         print("game over, calling game over callback")
         self._players_service.clean_players()
@@ -99,6 +109,18 @@ class Game(Controller):
         return
 
     def song_end_event(self):
+        if self._game_win:
+            if self._game_over:
+                self.game_end()
+            else:
+                selected_win = random.randint(1, len(self.win_audio_list)-1)
+                self._audio_service.play_song_request(self.win_audio_list[selected_win])
+                self._game_over = True
+            return
+        elif self._game_lose:
+            self.game_end()
+            return
+
         self._song_end = True
         if self.is_yam(self._prev_played_index):
             for player in self._players_service.registered_players.values():

@@ -7,8 +7,9 @@ class WaitStage(Controller):
     seconds_for_giveup = 40
     seconds_for_recall = 20
 
-    song_for_recall = "game_audio/call_again.wav"
     song_call_for_stage = "game_audio/call_stage.wav"
+    song_for_recall = "game_audio/call_again.wav"
+    song_ready_set_game = "game_audio/ready_set_game.wave"
 
     def __init__(self, loop, audio_service, stage_service, giveup_cb, stage_full_cb):
         super(WaitStage, self).__init__()
@@ -18,6 +19,7 @@ class WaitStage(Controller):
         self._stage_service = stage_service
         self._stage_full_cb = stage_full_cb
         self._giveup_cb = giveup_cb
+        self._wait_stage_end = False
 
         if not stage_service.get_is_alive():
             logging.info("not waiting for stage - no connected stage")
@@ -36,4 +38,9 @@ class WaitStage(Controller):
 
     def stage_full_event(self, is_full):
         if is_full:
+            self._audio_service.play_song_request(self.song_ready_set_game)
+            self._wait_stage_end = True
+
+    def song_end_event(self):
+        if self._wait_stage_end:
             self._loop.call_soon(self._stage_full_cb)
