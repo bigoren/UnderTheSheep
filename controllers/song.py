@@ -4,7 +4,7 @@ from controllers.controller import Controller
 
 class Song(Controller):
 
-    song_list = ("useit.wav", "millenium.wav", "nocturne.wav", "essoteric.wav", "outlier.wav", "fever.wav", "lost.wav")
+    song_list = ("useit.wav", "millenium.wav", "nocturne.wav", "essoteric.wav", "outlier.wav", "fever.wav", "lost.wav", "under.wav")
 
     def __init__(self, loop, audio_service, song_end_cb):
         super(Song, self).__init__()

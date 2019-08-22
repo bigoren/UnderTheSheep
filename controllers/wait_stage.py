@@ -1,4 +1,6 @@
 import logging
+import random
+
 from controllers.controller import Controller
 
 
@@ -9,7 +11,7 @@ class WaitStage(Controller):
 
     song_call_for_stage = "game_audio/call_stage.wav"
     song_for_recall = "game_audio/call_again.wav"
-    song_ready_set_game = "game_audio/ready_set_game.wave"
+    song_ready_set_game_list = ("game_audio/ready_set_game.wave", "game_audio/ready_3_2_1.wav")
 
     def __init__(self, loop, audio_service, stage_service, giveup_cb, stage_full_cb):
         super(WaitStage, self).__init__()
@@ -38,7 +40,8 @@ class WaitStage(Controller):
 
     def stage_full_event(self, is_full):
         if is_full:
-            self._audio_service.play_song_request(self.song_ready_set_game)
+            sel_ready_idx = random.randint(0, 1)
+            self._audio_service.play_song_request(self.song_ready_set_game_list[sel_ready_idx])
             self._wait_stage_end = True
 
     def song_end_event(self):

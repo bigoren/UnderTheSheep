@@ -46,8 +46,8 @@ class Game(Controller):
             return
         self._rounds += 1
 
-        random_selection = random.randint(1, len(self.yam_and_land_list)) # random selection should start from 0?
-        next_play_index = (self._prev_played_index + random_selection) % (len(self.yam_and_land_list) - 2)
+        random_selection = random.randint(1, len(self.yam_and_land_list) - 2)
+        next_play_index = (self._prev_played_index + random_selection) % (len(self.yam_and_land_list))
         self._prev_played_index = next_play_index
         audio_file_name = self.yam_and_land_list[next_play_index]
 

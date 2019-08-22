@@ -6,7 +6,7 @@ from controllers.controller import Controller
 
 class WaitPlayers(Controller):
 
-    seconds_for_giveup = 10
+    seconds_for_giveup = 20
     seconds_for_recall = 10
 
     song_for_recall = "game_audio/call_again.wav"
