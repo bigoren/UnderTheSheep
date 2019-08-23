@@ -24,6 +24,7 @@ class WaitStage(Controller):
         self._giveup_cb = giveup_cb
         self._wait_stage_end = False
         self._stage_full_finished = False
+        self._should_play = False
 
         if not stage_service.get_is_alive():
             logging.info("not waiting for stage - no connected stage")
@@ -42,15 +43,24 @@ class WaitStage(Controller):
 
     def stage_full_event(self, is_full):
         if is_full:
-            self._audio_service.stop_song()
             self._wait_stage_end = True
+            sel_ready_idx = random.randint(0, 1)
+            if self._should_play:
+                self._audio_service.play_song_request(self.song_ready_set_game_list[sel_ready_idx])
+                self._should_play = False
+            else:
+                self._should_play = True
+                self._audio_service.stop_song()
 
     def song_end_event(self):
+        if not self._wait_stage_end:
+            self._should_play = True
+
         if self._wait_stage_end and not self._stage_full_finished:
-            logging.info("Song ended")
             self._stage_full_finished = True
             sel_ready_idx = random.randint(0, 1)
-            self._audio_service.play_song_request(self.song_ready_set_game_list[sel_ready_idx])
+            if self._should_play:
+                self._audio_service.play_song_request(self.song_ready_set_game_list[sel_ready_idx])
             self._boxes_service.shutdown_all_leds()
             self._stage_service.set_stage_show_reading(False)
             self._stage_service.send_command_to_leds(animation_mode=3, fill_percent=1)

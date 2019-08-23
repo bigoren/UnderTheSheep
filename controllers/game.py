@@ -11,7 +11,7 @@ class Game(Controller):
     win_audio_list = ("/game_audio/win.wav", "/game_audio/win1.wav", "/game_audio/win2.wav", "/game_audio/win3.wav")
     lose_audio = "/game_audio/lose.wav"
     yam_and_land_list = yam_audio_list + land_audio_list
-    max_rounds = 15
+    max_rounds = 7
 
     def __init__(self, loop, audio_service, boxes_service, players_service, stage_service, game_end_cb):
         super(Game, self).__init__()
@@ -32,6 +32,8 @@ class Game(Controller):
         self._game_lose = False
         self._game_over = False
         self._waiting_for_next_win = False
+        self._wanted_callback = None
+        self._waiting_for_song_finish = False
         self.choose_land_or_yam()
 
     def is_yam(self, index):
@@ -71,7 +73,9 @@ class Game(Controller):
             self._was_full = True
         elif not is_full and self._was_full and not self._game_win:
             logging.info("Went off stage...")
-            self.game_lose()
+            self._audio_service.stop_song()
+            self._waiting_for_song_finish = True
+            self._wanted_callback = self.game_lose
             self._was_full = False
         else:
             self._was_full = False
@@ -96,6 +100,8 @@ class Game(Controller):
             return
         else:
             player.player_chipped_box(box_index)
+
+        if player.chipped_box:
             self._boxes_service.send_command_to_leds(box_index, None)
 
         if self._players_service.has_all_players_chipped():
@@ -131,6 +137,11 @@ class Game(Controller):
         if self._timeout_handle is not None:
             self._timeout_handle.cancel()
         self._timeout_handle = self._loop.call_later(25, self.game_end)
+
+        if self._waiting_for_song_finish and self._wanted_callback is not None:
+            self._wanted_callback()
+            return
+
         if self._game_win:
             self.game_win()
             return
