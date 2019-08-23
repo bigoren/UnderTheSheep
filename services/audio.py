@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import os
 
 from aiohttp import ClientSession
 
@@ -42,6 +43,7 @@ class AudioService:
                 r = await self._player_request(url, session, player_msg)
                 return r
         except:
+            os.system("/home/pi/run_player.sh")
             logging.error("error playing song {}".format(file_name))
 
     async def _player_request(self, url: str, session: ClientSession, player_msg):
