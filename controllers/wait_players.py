@@ -22,6 +22,9 @@ class WaitPlayers(Controller):
         self._stage_service = stage_service
         self._has_players_cb = has_players_cb
         self._giveup_cb = giveup_cb
+        self._is_song_playing = False
+        self._should_finish = False
+        self._wanted_callback = None
 
         if not boxes_service.get_alive():
             logging.info("not waiting for players - no connected boxes")
@@ -36,17 +39,28 @@ class WaitPlayers(Controller):
         self._boxes_service.waiting_for_players_led()
 
         self._audio_service.play_song_request(self.song_call_for_players)
+        self._is_song_playing = True
         self.reg_handlers.append(self._loop.call_later(self.seconds_for_giveup, self._state_timed_out))
-        self.reg_handlers.append(self._loop.call_later(self.seconds_for_recall, self._audio_service.play_song_request, self.song_for_recall))
+        self.reg_handlers.append(self._loop.call_later(self.seconds_for_recall, self._play_song, self.song_for_recall))
 
         self.registered_boxes = set()
+
+    def _play_song(self, song_name):
+        self._audio_service.play_song_request(song_name)
+        self._is_song_playing = True
 
     def _state_timed_out(self):
         logging.info("state wait for players timed out")
         if len(self.registered_boxes) > 0:
-            self._loop.call_soon(self._has_players_cb)
+            self._wanted_callback = self._has_players_cb
         else:
-            self._loop.call_soon(self._giveup_cb)
+            self._wanted_callback = self._giveup_cb
+
+        if self._is_song_playing:
+            self._audio_service.stop_song()
+            self._should_finish = True
+        else:
+            self._loop.call_soon(self._wanted_callback)
 
     def boxes_chip_event(self, msg_data, box_index):
 
@@ -66,12 +80,21 @@ class WaitPlayers(Controller):
     def check_if_done(self):
         alive_boxes_indices = set(self._boxes_service.get_alive())
         if len(self.registered_boxes) >= len(alive_boxes_indices):
-            self._loop.call_soon(self._has_players_cb)
+            self._wanted_callback = self._has_players_cb
+            if self._is_song_playing:
+                self._audio_service.stop_song()
+                self._should_finish = True
+            else:
+                self._loop.call_soon(self._wanted_callback)
 
     def stage_full_event(self, is_full):
         pass
 
     def song_end_event(self):
-        pass
+        if self._is_song_playing:
+            self._is_song_playing = False
+
+        if self._should_finish:
+            self._loop.call_soon(self._wanted_callback)
 
 

@@ -70,7 +70,7 @@ class Boxes:
         if color:
             if color == 6:
                 data = {"color":128, "master_state":2}
-            if color == 7:
+            elif color == 7:
                 data = {"color":128, "master_state":1}
             else:
                 data = {"color":color, "master_state":2}

@@ -45,11 +45,15 @@ class WaitStage(Controller):
         if is_full:
             self._wait_stage_end = True
             sel_ready_idx = random.randint(0, 1)
+            self._stage_service.set_stage_show_reading(False)
+            self._stage_service.send_command_to_leds(animation_mode=3, fill_percent=1)
+            self.cancel_timers()
             if self._should_play:
+                logging.info("Playing in full event")
                 self._audio_service.play_song_request(self.song_ready_set_game_list[sel_ready_idx])
                 self._should_play = False
+                self._stage_full_finished = True
             else:
-                self._should_play = True
                 self._audio_service.stop_song()
 
     def song_end_event(self):
@@ -57,15 +61,12 @@ class WaitStage(Controller):
             self._should_play = True
 
         if self._wait_stage_end and not self._stage_full_finished:
-            self._stage_full_finished = True
             sel_ready_idx = random.randint(0, 1)
-            if self._should_play:
-                self._audio_service.play_song_request(self.song_ready_set_game_list[sel_ready_idx])
+            logging.info("Playing in song end")
+            self._audio_service.play_song_request(self.song_ready_set_game_list[sel_ready_idx])
             self._boxes_service.shutdown_all_leds()
-            self._stage_service.set_stage_show_reading(False)
-            self._stage_service.send_command_to_leds(animation_mode=3, fill_percent=1)
-            return
-        if self._stage_full_finished:
+            self._stage_full_finished = True
+        elif self._stage_full_finished:
             self._stage_service.set_stage_show_reading(True)
-            self._stage_service.send_command_to_leds(animation_mode=0, fill_percent=1)
+            self._stage_service.send_command_to_leds(animation_mode=0, fill_percent=0)
             self._loop.call_soon(self._stage_full_cb)

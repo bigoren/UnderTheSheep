@@ -17,6 +17,7 @@ class Stage:
         self._on_disconnected_event = None
         self._loop = loop
         self._show_reading = False
+        self._in_conffetti = False
 
     def set_stage_show_reading(self, show_reading):
         self._show_reading = show_reading
@@ -61,9 +62,13 @@ class Stage:
 
         if self._show_reading:
             if float(curr_weight) > self.empty_threshold:
+                self._in_conffetti = False
                 fill_percent = float(curr_weight) / float(self.full_threshold)
             else:
                 fill_percent = 0
+            if self._in_conffetti:
+                return
+
             self.send_command_to_leds(fill_percent)
 
     def send_command_to_leds(self, fill_percent, animation_mode=2, led_color=None):
@@ -77,6 +82,10 @@ class Stage:
         data_out = {"animation_mode": animation_mode, "led_percent": fill_percent, "led_color": led_color}
         #logging.debug("sending {}".format(data_out))
         self.mqtt_client.publish(pub_topic, json.dumps(data_out))
+
+    def do_conffeti(self):
+        self.send_command_to_leds(animation_mode=1, fill_percent=0)
+        self._in_conffetti = True
 
     def register_on_full_event(self, func):
         self._on_full_event = func

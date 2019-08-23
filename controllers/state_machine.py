@@ -86,8 +86,8 @@ class UnderTheSeaState:
         self.curr_state = WaitStage(self._loop, self._audio_service, self._stage, self._boxes,
                                     self.start_state_play_song, self.start_state_game_on)
         self._stage.set_stage_show_reading(True)
+        self._stage.do_conffeti()
         chipped_boxes = []
-        self._stage.send_command_to_leds(animation_mode=1, fill_percent=0)
         for player in self.players_service.registered_players.values():
             chipped_boxes.append(player.box_index)
         for box in self._boxes.get_alive():
