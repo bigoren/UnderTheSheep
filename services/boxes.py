@@ -42,7 +42,7 @@ class Boxes:
         self._new_monitor_message(msg_data, box_index)
 
     def _on_mqtt_message_chip(self, client, userdata, message):
-        #logging.debug("Got message:", message.topic, message.payload.decode())
+        logging.debug("Got message: {} {}".format(message.topic, message.payload.decode()))
         box_name = message.topic.split("/")[3]
         box_index = int(box_name[3])
         msg_data = json.loads(message.payload.decode())
