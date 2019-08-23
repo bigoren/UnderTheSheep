@@ -17,7 +17,8 @@ class UnderTheSeaState:
     game_on = "game_on"
 
     UID_TO_SONG = {
-        "2c25bdfe": "nocturne.wav"
+        "2c25bdfe": "nocturne.wav",
+        "UID": "SONG_NAME.wav"
     }
 
     def __init__(self, loop, stage, boxes, audio_service):
@@ -56,11 +57,24 @@ class UnderTheSeaState:
     def boxes_chip_event(self, msg_data, box_index):
         if not self.curr_state:
             return
+        current_state_name = None
         if type(self.curr_state) != WaitStage:
             self.curr_state.boxes_chip_event(msg_data, box_index)
-        if type(self.curr_state) == Song:
+
+        if type(self.curr_state) == WaitStage:
+            current_state_name = "WaitStage"
+        elif type(self.curr_state) == Song:
+            current_state_name = "Song"
             if msg_data["UID"] in self.UID_TO_SONG.keys():
                 self.curr_state.choose_song(self.UID_TO_SONG[msg_data["UID"]])
+        elif type(self.curr_state) == WaitPlayers:
+            current_state_name = "WaitPlayers"
+        elif type(self.curr_state) == Game:
+            current_state_name = "Game"
+        else:
+            current_state_name = "NotCoded"
+
+        self._boxes.log_chip(msg_data["UID"], msg_data["old_chip"], box_index, current_state_name)
 
     def boxes_disconnected_event(self):
         if type(self.curr_state) != Song:

@@ -1,5 +1,7 @@
+import datetime
 import json
 import logging
+import csv
 
 
 class BoxData:
@@ -24,6 +26,13 @@ class Boxes:
         self._on_chip_event = None
         self._on_disconnected_event = None
         self._loop = loop
+        self._chips_log = open(datetime.datetime.now().strftime('chips_%Y-%m-%d_%H-%M'), 'w', newline='')
+        self._csv_writer = csv.writer(self._chips_log, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        self._csv_writer.writerow(["Chip UID", "Old Chip", "Box Id", "State"])
+
+    def log_chip(self, chip_uid, is_old_chip, box_id, current_state_name):
+        self._csv_writer.writerow([chip_uid, is_old_chip, box_id, current_state_name])
+        self._chips_log.flush()
 
     def mqtt_sub(self):
         self.mqtt_client.subscribe("/sensors/rfid/+/monitor", 0)
