@@ -27,7 +27,7 @@ class AudioService:
 
     def _on_message_player(self, client, userdata, message):
         logging.debug("Player Message Received: " + message.payload.decode())
-        payload = json.loads(message.payload)
+        payload = json.loads(message.payload.decode())
         if not payload["song_is_playing"]:
             self.call_song_end_event()
 
