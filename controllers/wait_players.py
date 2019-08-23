@@ -6,10 +6,10 @@ from controllers.controller import Controller
 
 class WaitPlayers(Controller):
 
-    seconds_for_giveup = 20
-    seconds_for_recall = 10
+    seconds_for_giveup = 60
+    seconds_for_recall = 30
 
-    song_for_recall = "game_audio/call_again.wav"
+    song_for_recall = "game_audio/call_again2.wav"
     song_call_for_players = "game_audio/call_players.wav"
 
     def __init__(self, loop, audio_service, boxes_service, players_service, stage_service, giveup_cb, has_players_cb):
@@ -69,6 +69,9 @@ class WaitPlayers(Controller):
             self._loop.call_soon(self._has_players_cb)
 
     def stage_full_event(self, is_full):
+        pass
+
+    def song_end_event(self):
         pass
 
 

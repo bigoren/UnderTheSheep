@@ -11,17 +11,19 @@ class WaitStage(Controller):
 
     song_call_for_stage = "game_audio/call_stage.wav"
     song_for_recall = "game_audio/call_again.wav"
-    song_ready_set_game_list = ("game_audio/ready_set_game.wave", "game_audio/ready_3_2_1.wav")
+    song_ready_set_game_list = ("game_audio/ready_set_game.wav", "game_audio/ready_3_2_1.wav")
 
-    def __init__(self, loop, audio_service, stage_service, giveup_cb, stage_full_cb):
+    def __init__(self, loop, audio_service, stage_service, boxes_service, giveup_cb, stage_full_cb):
         super(WaitStage, self).__init__()
 
         self._loop = loop
         self._audio_service = audio_service
         self._stage_service = stage_service
+        self._boxes_service = boxes_service
         self._stage_full_cb = stage_full_cb
         self._giveup_cb = giveup_cb
         self._wait_stage_end = False
+        self._stage_full_finished = False
 
         if not stage_service.get_is_alive():
             logging.info("not waiting for stage - no connected stage")
@@ -40,10 +42,20 @@ class WaitStage(Controller):
 
     def stage_full_event(self, is_full):
         if is_full:
-            sel_ready_idx = random.randint(0, 1)
-            self._audio_service.play_song_request(self.song_ready_set_game_list[sel_ready_idx])
+            self._audio_service.stop_song()
             self._wait_stage_end = True
 
     def song_end_event(self):
-        if self._wait_stage_end:
+        if self._wait_stage_end and not self._stage_full_finished:
+            logging.info("Song ended")
+            self._stage_full_finished = True
+            sel_ready_idx = random.randint(0, 1)
+            self._audio_service.play_song_request(self.song_ready_set_game_list[sel_ready_idx])
+            self._boxes_service.shutdown_all_leds()
+            self._stage_service.set_stage_show_reading(False)
+            self._stage_service.send_command_to_leds(animation_mode=3, fill_percent=1)
+            return
+        if self._stage_full_finished:
+            self._stage_service.set_stage_show_reading(True)
+            self._stage_service.send_command_to_leds(animation_mode=0, fill_percent=1)
             self._loop.call_soon(self._stage_full_cb)

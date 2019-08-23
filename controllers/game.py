@@ -11,7 +11,7 @@ class Game(Controller):
     win_audio_list = ("/game_audio/win.wav", "/game_audio/win1.wav", "/game_audio/win2.wav", "/game_audio/win3.wav")
     lose_audio = "/game_audio/lose.wav"
     yam_and_land_list = yam_audio_list + land_audio_list
-    max_rounds = 10
+    max_rounds = 3
 
     def __init__(self, loop, audio_service, boxes_service, players_service, stage_service, game_end_cb):
         super(Game, self).__init__()
@@ -31,6 +31,7 @@ class Game(Controller):
         self._game_win = False
         self._game_lose = False
         self._game_over = False
+        self._waiting_for_next_win = False
         self.choose_land_or_yam()
 
     def is_yam(self, index):
@@ -42,6 +43,8 @@ class Game(Controller):
     def choose_land_or_yam(self):
         if self._rounds == self.max_rounds:
             self._game_win = True
+            self._stage_service.send_command_to_leds(animation_mode=4, fill_percent=0)
+            self._stage_service.set_stage_show_reading(False)
             self._audio_service.play_song_request(self.win_audio_list[0])
             return
         self._rounds += 1
@@ -57,15 +60,16 @@ class Game(Controller):
 
         if self._timeout_handle is not None:
             self._timeout_handle.cancel()
-        self._timeout_handle = self._loop.call_later(25, self.game_end)
 
     def stage_full_event(self, is_full):
+        if self._game_lose or self._game_win:
+            return
         if self.is_yam(self._prev_played_index):
             return
         elif is_full:
             self.choose_land_or_yam()
             self._was_full = True
-        elif not is_full and self._was_full:
+        elif not is_full and self._was_full and not self._game_win:
             logging.info("Went off stage...")
             self.game_lose()
             self._was_full = False
@@ -79,6 +83,8 @@ class Game(Controller):
             logging.info("Lost because you chipped when the stage was full")
             self.game_lose()
         if not self._song_end:
+            return
+        if self._game_lose or self._game_win:
             return
 
         chip_uid = msg_data["UID"]
@@ -97,9 +103,13 @@ class Game(Controller):
             self._players_service.reset_players_chipped_state()
 
     def game_lose(self):
-        print("game lose, play lose audio and flag it")  # only when the audio ends the game will be over
-        self._audio_service.play_song_request(self.lose_audio)
-        self._game_lose = True
+        if not self._game_lose:
+            print("game lose, play lose audio and flag it")  # only when the audio ends the game will be over
+            self._audio_service.play_song_request(self.lose_audio)
+            self._stage_service.send_command_to_leds(animation_mode=3, fill_percent=0, led_color=0)
+            self._stage_service.set_stage_show_reading(False)
+            self._game_lose = True
+            self._timeout_handle.cancel()
 
     def game_end(self):
         print("game over, calling game over callback")
@@ -108,14 +118,21 @@ class Game(Controller):
         self._loop.call_soon(self._game_end_cb)
         return
 
+    def game_win(self):
+        if self._game_over:
+            self.game_end()
+        else:
+            logging.info("Game finished, now play random song")
+            selected_win = random.randint(1, len(self.win_audio_list) - 1)
+            self._audio_service.play_song_request(self.win_audio_list[selected_win])
+            self._game_over = True
+
     def song_end_event(self):
+        if self._timeout_handle is not None:
+            self._timeout_handle.cancel()
+        self._timeout_handle = self._loop.call_later(25, self.game_end)
         if self._game_win:
-            if self._game_over:
-                self.game_end()
-            else:
-                selected_win = random.randint(1, len(self.win_audio_list)-1)
-                self._audio_service.play_song_request(self.win_audio_list[selected_win])
-                self._game_over = True
+            self.game_win()
             return
         elif self._game_lose:
             self.game_end()

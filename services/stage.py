@@ -1,9 +1,10 @@
 import json
 import logging
 
+
 class Stage:
 
-    full_threshold = 300
+    full_threshold = 50
     empty_threshold = 25
 
     def __init__(self, loop, mqtt_client):
@@ -62,17 +63,19 @@ class Stage:
             if float(curr_weight) > self.empty_threshold:
                 fill_percent = float(curr_weight) / float(self.full_threshold)
             else:
-                fill_percent = 0.0
-            #TODO: send the reading to the LEDs
+                fill_percent = 0
             self.send_command_to_leds(fill_percent)
 
-    def send_command_to_leds(self, fill_percent):
+    def send_command_to_leds(self, fill_percent, animation_mode=2, led_color=None):
         pub_topic = "/sensors/loadcell/leds"
         if fill_percent < 0:
             fill_percent = 0.0
         if fill_percent > 1:
             fill_percent = 1.0
-        data_out = {"led_percent": fill_percent, "led_color": int(fill_percent*128)}
+        if led_color is None:
+            led_color = int(fill_percent*128)
+        data_out = {"animation_mode": animation_mode, "led_percent": fill_percent, "led_color": led_color}
+        #logging.debug("sending {}".format(data_out))
         self.mqtt_client.publish(pub_topic, json.dumps(data_out))
 
     def register_on_full_event(self, func):
