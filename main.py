@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s.%(msecs)03d] -%(le
 logging.info('Main program started for UnderTheSheep.')
 
 loop = asyncio.get_event_loop()
-broker_url = "192.168.14.22"
+broker_url = "127.0.0.1"
 broker_port = 1883
 
 mqtt_c = aiomqtt.Client(loop=loop, client_id="main")
@@ -35,7 +35,7 @@ async def subscribe():
 
     mqtt_c.on_connect = on_connect
 
-    logging.info(f'Connecting to: {broker_url}:{broker_port}')
+    logging.info("Connecting to: {}:{}".format(broker_url, broker_port))
     await mqtt_c.connect(broker_url, broker_port)
     await connected.wait()
     logging.info("Connected!")
