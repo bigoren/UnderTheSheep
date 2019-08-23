@@ -4,7 +4,7 @@ import logging
 
 class Stage:
 
-    full_threshold = 50
+    full_threshold = 350
     empty_threshold = 25
 
     def __init__(self, loop, mqtt_client):

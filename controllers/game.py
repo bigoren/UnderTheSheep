@@ -11,7 +11,7 @@ class Game(Controller):
     win_audio_list = ("/game_audio/win.wav", "/game_audio/win1.wav", "/game_audio/win2.wav", "/game_audio/win3.wav")
     lose_audio = "/game_audio/lose.wav"
     yam_and_land_list = yam_audio_list + land_audio_list
-    max_rounds = 3
+    max_rounds = 15
 
     def __init__(self, loop, audio_service, boxes_service, players_service, stage_service, game_end_cb):
         super(Game, self).__init__()
