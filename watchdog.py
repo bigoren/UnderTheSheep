@@ -37,7 +37,7 @@ class Watchdog:
 
 
 loop = asyncio.get_event_loop()
-broker_url = "127.0.0.1"
+broker_url = "10.0.0.200"
 broker_port = 1883
 
 mqtt_c = aiomqtt.Client(loop=loop, client_id="watchdog")

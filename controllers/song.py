@@ -4,7 +4,20 @@ from controllers.controller import Controller
 
 class Song(Controller):
 
-    song_list = ["useit.wav", "millenium.wav", "nocturne.wav", "essoteric.wav", "outlier.wav", "fever.wav", "lost.wav", "because.wav"] + ["background.wav"] * 10
+    song_list = ["lost.wav", "millenium.wav", "nocturne.wav", "essoteric.wav", "outlier.wav", "fever.wav", "because.wav", "alterego.wav", "useit.wav"] + ["background.wav"] * 10
+    should_continue_after_song = {
+        "lost.wav": False,
+        "millenium.wav": True,
+        "nocturne.wav": False,
+        "essoteric.wav": False,
+        "outlier.wav": False,
+        "fever.wav": False,
+        "because.wav": False,
+        "alterego.wav": False,
+        "useit.wav": False,
+        "background.wav": False,
+        "silience.wav": True
+    }
 
     def __init__(self, loop, audio_service, song_end_cb):
         super(Song, self).__init__()
@@ -43,12 +56,18 @@ class Song(Controller):
             self.choose_song(self._next_song)
             self._next_song = None
             return
-        
+
+        current_song_name = self.song_list[self.curr_song_index]
         self._is_playing = False
         self.curr_song_index = self.curr_song_index + 1
         if self.curr_song_index == len(self.song_list):
             self.curr_song_index = 0
-        self._loop.call_soon(self._song_end_cb)
+
+        logging.info("Current song name is: {} and should skip is: {}".format(current_song_name, self.should_continue_after_song[current_song_name]))
+        if not self.should_continue_after_song[current_song_name]:
+            self.choose_song(self._next_song)
+        else:
+            self._loop.call_soon(self._song_end_cb)
 
     def boxes_chip_event(self, msg_data, box_index):
         #nothing to do here, or maybe not?
