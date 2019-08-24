@@ -1,7 +1,11 @@
+import csv
+import datetime
 import logging
 import random
 
 from controllers.controller import Controller
+
+game_counter = 0
 
 
 class Game(Controller):
@@ -36,7 +40,31 @@ class Game(Controller):
         self._waiting_for_next_win = False
         self._wanted_callback = None
         self._waiting_for_song_finish = False
+        self._game_log = open(datetime.datetime.now().strftime('game_%Y-%m-%d_%H-%M'), 'w', newline='')
+        self._csv_writer = csv.writer(self._game_log, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        self._csv_writer.writerow(["Game ID", "Round", "Song", "UID_1", "UID_2", "UID_3"])
+        global game_counter
+        game_counter += 1
         self.choose_land_or_yam()
+
+    def log_game(self, songname):
+        global game_counter
+        num_players = len(self._players_service.registered_players)
+        players_ids = list(self._players_service.registered_players.keys())
+        if num_players > 0:
+            uid1 = players_ids[0]
+        else:
+            uid1 = None
+        if num_players > 1:
+            uid2 = players_ids[1]
+        else:
+            uid2 = None
+        if num_players > 2:
+            uid3 = players_ids[2]
+        else:
+            uid3 = None
+        self._csv_writer.writerow([game_counter, self._rounds, songname, uid1, uid2, uid3])
+        self._game_log.flush()
 
     def is_yam(self, index):
         return index < len(self.yam_audio_list)
@@ -60,6 +88,7 @@ class Game(Controller):
 
         self._song_end = False
         logging.info("playing file {0}, round: {1}".format(audio_file_name, self._rounds))
+        self.log_game(audio_file_name)
         self._audio_service.play_song_request(audio_file_name)
 
         if self._timeout_handle is not None:
@@ -114,6 +143,7 @@ class Game(Controller):
     def game_lose(self):
         if not self._game_lose:
             print("game lose, play lose audio and flag it")  # only when the audio ends the game will be over
+            self.log_game(self.lose_audio)
             self._audio_service.play_song_request(self.lose_audio)
             self._stage_service.send_command_to_leds(animation_mode=3, fill_percent=0, led_color=0)
             self._stage_service.set_stage_show_reading(False)
@@ -133,6 +163,7 @@ class Game(Controller):
         else:
             logging.info("Game finished, now play random song")
             selected_win = random.randint(1, len(self.win_audio_list) - 1)
+            self.log_game(self.win_audio_list[selected_win])
             self._audio_service.play_song_request(self.win_audio_list[selected_win])
             self._game_over = True
 
