@@ -11,10 +11,11 @@ logging.info('Watchdog for UnderTheSheep')
 
 class Watchdog:
 
-    def __init__(self, _loop, timeout_minute=15):
+    def __init__(self, _loop, mqtt_client, timeout_minute=15):
         self._timeout_minute = timeout_minute
         self._timeout_timer = None
         self._loop = loop
+        self.mqtt_client = mqtt_client
         self.timeout_finished()
 
     def mqtt_sub(self):
@@ -25,7 +26,7 @@ class Watchdog:
         if self._timeout_timer is not None:
             logging.info("Song request received, Canceling timer")
             self._timeout_timer.cancel()
-            self._timeout_timer = Nonelf._is_playing = False
+            self._timeout_timer = None
 
         self._timeout_timer = self._loop.call_later(60 * self._timeout_minute, self.timeout_finished)
     
@@ -41,6 +42,7 @@ broker_url = "10.0.0.200"
 broker_port = 1883
 
 mqtt_c = aiomqtt.Client(loop=loop, client_id="watchdog")
+watchdog = Watchdog(loop, mqtt_c)
 
 async def subscribe():
     mqtt_c.loop_start()
@@ -65,12 +67,10 @@ async def subscribe():
         logging.debug("Monitor Message Received: " + message.payload.decode())
 
     mqtt_c.message_callback_add("monitor", on_message_monitor)
+    watchdog.mqtt_sub()
 
 
 loop.run_until_complete(subscribe())
-
-# We want to run the state machine only after we connected to the mqtt service
-watchdog = Watchdog(loop)
 
 loop.run_forever()
 

@@ -64,6 +64,7 @@ class Game(Controller):
 
         if self._timeout_handle is not None:
             self._timeout_handle.cancel()
+        self._timeout_handle = self._loop.call_later(25, self.game_lose)
 
     def stage_full_event(self, is_full):
         if self._game_lose or self._game_win:
@@ -136,10 +137,6 @@ class Game(Controller):
             self._game_over = True
 
     def song_end_event(self):
-        if self._timeout_handle is not None:
-            self._timeout_handle.cancel()
-        self._timeout_handle = self._loop.call_later(25, self.game_end)
-
         if self._waiting_for_song_finish and self._wanted_callback is not None:
             self._wanted_callback()
             return

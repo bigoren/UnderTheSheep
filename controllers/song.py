@@ -4,11 +4,11 @@ from controllers.controller import Controller
 
 class Song(Controller):
 
-    song_list = ["lost.wav", "millenium.wav", "nocturne.wav", "essoteric.wav", "outlier.wav", "fever.wav", "because.wav", "alterego.wav", "useit.wav"] + ["background.wav"] * 10
+    song_list = ["lost.wav", "millenium.wav"] + (["silence.wav"] * 4) + ["outlier.wav", "essoteric.wav", "because.wav", "nocturne.wav"] + (["silence.wav"] * 4) + ["fever.wav", "alterego.wav", "useit.wav"] + ["silence.wav", "background.wav"] * 5
     should_continue_after_song = {
         "lost.wav": False,
         "millenium.wav": True,
-        "nocturne.wav": False,
+        "nocturne.wav": True,
         "essoteric.wav": False,
         "outlier.wav": False,
         "fever.wav": False,
@@ -16,7 +16,7 @@ class Song(Controller):
         "alterego.wav": False,
         "useit.wav": False,
         "background.wav": False,
-        "silience.wav": True
+        "silence.wav": True
     }
 
     def __init__(self, loop, audio_service, song_end_cb):
