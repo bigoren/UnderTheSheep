@@ -17,8 +17,18 @@ class UnderTheSeaState:
     game_on = "game_on"
 
     UID_TO_SONG = {
-        "2c25bdfe": "nocturne.wav",
-        "UID": "SONG_NAME.wav"
+        "2c25bdfe": "lost.wav", # Ran
+        "6e40cd61": "lost.wav", # Hadas
+        "7eadcb61": "outlier.wav", # Loi
+        "9e8ed461": "outlier.wav", # Gur
+        "bebfc361": "useit.wav", # Amir
+        "3e1fcd61": "millenium.wav", # Shani
+        "2e78cd61": "because.wav", # Inbal
+        "4c56b7fe": "nocturne.wav", # Bigler
+        "e8acb61": "because.wav", # Eli
+        "1ebcc461": "essoteric.wav", # Tili
+        "fe7eca61": "because.wav", # Moli
+        "7e8cc61": "fever.wav" # Ana
     }
 
     def __init__(self, loop, stage, boxes, audio_service):

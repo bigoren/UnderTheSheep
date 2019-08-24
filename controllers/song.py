@@ -4,7 +4,7 @@ from controllers.controller import Controller
 
 class Song(Controller):
 
-    song_list = ("useit.wav", "millenium.wav", "nocturne.wav", "essoteric.wav", "outlier.wav", "fever.wav", "lost.wav", "under.wav")
+    song_list = ["useit.wav", "millenium.wav", "nocturne.wav", "essoteric.wav", "outlier.wav", "fever.wav", "lost.wav", "because.wav"] + ["background.wav"] * 10
 
     def __init__(self, loop, audio_service, song_end_cb):
         super(Song, self).__init__()
@@ -43,7 +43,8 @@ class Song(Controller):
             self.choose_song(self._next_song)
             self._next_song = None
             return
-
+        
+        self._is_playing = False
         self.curr_song_index = self.curr_song_index + 1
         if self.curr_song_index == len(self.song_list):
             self.curr_song_index = 0
