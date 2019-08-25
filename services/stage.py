@@ -66,6 +66,8 @@ class Stage:
                 fill_percent = float(curr_weight) / float(self.full_threshold)
             else:
                 fill_percent = 0
+                if not self._in_conffetti:
+                    self.do_conffeti()
             if self._in_conffetti:
                 return
 

@@ -93,7 +93,7 @@ class Game(Controller):
 
         if self._timeout_handle is not None:
             self._timeout_handle.cancel()
-        self._timeout_handle = self._loop.call_later(25, self.game_lose)
+        self._timeout_handle = self._loop.call_later(15, self.game_lose)
 
     def stage_full_event(self, is_full):
         if self._game_lose or self._game_win:
