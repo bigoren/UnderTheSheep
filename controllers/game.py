@@ -78,6 +78,7 @@ class Game(Controller):
             self._stage_service.send_command_to_leds(animation_mode=4, fill_percent=0)
             self._stage_service.set_stage_show_reading(False)
             self._audio_service.play_song_request(self.win_audio_list[0])
+            self._timeout_handle.cancel()
             return
         self._rounds += 1
 
@@ -94,6 +95,7 @@ class Game(Controller):
         if self._timeout_handle is not None:
             self._timeout_handle.cancel()
         self._timeout_handle = self._loop.call_later(15, self.game_lose)
+        self.reg_handlers.append(self._timeout_handle)
 
     def stage_full_event(self, is_full):
         if self._game_lose or self._game_win:
@@ -168,15 +170,16 @@ class Game(Controller):
             self._game_over = True
 
     def song_end_event(self):
-        if self._waiting_for_song_finish and self._wanted_callback is not None:
-            self._wanted_callback()
-            return
-
         if self._game_win:
             self.game_win()
             return
         elif self._game_lose:
             self.game_end()
+            return
+
+        if self._waiting_for_song_finish and self._wanted_callback is not None:
+            self._wanted_callback()
+            self._waiting_for_song_finish = False
             return
 
         self._song_end = True

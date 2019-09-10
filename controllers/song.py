@@ -4,8 +4,8 @@ from controllers.controller import Controller
 
 class Song(Controller):
 
-    song_list = ["lost.wav", "millenium.wav"] + (["silence.wav"] * 4) + ["outlier.wav", "essoteric.wav", "because.wav", "nocturne.wav"] + \
-                 (["silence.wav"] * 4) + ["fever.wav", "alterego.wav", "useit.wav"] + (["background.wav"] * 4)
+    song_list = ["lost.wav", "millenium.wav"] + (["silence.wav"] * 2) + ["outlier.wav", "essoteric.wav", "because.wav", "nocturne.wav"] + \
+                 (["silence.wav"] * 2) + ["fever.wav", "alterego.wav", "useit.wav"] + (["background.wav"] * 6)
     should_continue_after_song = {
         "lost.wav": False,
         "millenium.wav": True,
